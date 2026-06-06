@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" role="img" aria-label="Watt The Hack control loop: each 15-minute step the engine shows your controller the grid state (demand, solar, price, SOC); your controller returns an action (battery, diesel, curtail); the engine simulates physics and the market and charges a cost; your score is the sum of cost over every step, lower wins.">
+  <defs>
+    <marker id="wth-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    </marker>
+  </defs>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect x="1" y="1" width="898" height="318" rx="14" fill="#ffffff" stroke="#d0d7de" stroke-width="1.5"/>
+
+    <!-- loop-back arrow: the engine produces next step's state -->
+    <path d="M774 130 C 774 50, 126 50, 126 130" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#wth-arrow)"/>
+    <text x="450" y="42" text-anchor="middle" font-size="12.5" font-style="italic" fill="#57606a">every 15-minute step</text>
+
+    <!-- State -->
+    <rect x="42" y="130" width="168" height="72" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
+    <text x="126" y="162" text-anchor="middle" font-size="15" font-weight="700" fill="#0969da">State</text>
+    <text x="126" y="184" text-anchor="middle" font-size="11" fill="#57606a">demand · solar · price · SOC</text>
+
+    <!-- Your controller -->
+    <rect x="258" y="130" width="168" height="72" rx="10" fill="#f5edff" stroke="#8250df" stroke-width="2"/>
+    <text x="342" y="162" text-anchor="middle" font-size="15" font-weight="700" fill="#8250df">Your controller</text>
+    <text x="342" y="184" text-anchor="middle" font-size="12" fill="#57606a">step(state)</text>
+
+    <!-- Action -->
+    <rect x="474" y="130" width="168" height="72" rx="10" fill="#dafbe1" stroke="#1a7f37" stroke-width="2"/>
+    <text x="558" y="162" text-anchor="middle" font-size="15" font-weight="700" fill="#1a7f37">Action</text>
+    <text x="558" y="184" text-anchor="middle" font-size="11" fill="#57606a">battery · diesel · curtail</text>
+
+    <!-- Engine -->
+    <rect x="690" y="130" width="168" height="72" rx="10" fill="#fff1e5" stroke="#bc4c00" stroke-width="2"/>
+    <text x="774" y="162" text-anchor="middle" font-size="15" font-weight="700" fill="#bc4c00">Engine</text>
+    <text x="774" y="184" text-anchor="middle" font-size="12" fill="#57606a">physics + market</text>
+
+    <!-- forward arrows -->
+    <line x1="214" y1="166" x2="254" y2="166" stroke="#57606a" stroke-width="2" marker-end="url(#wth-arrow)"/>
+    <line x1="430" y1="166" x2="470" y2="166" stroke="#57606a" stroke-width="2" marker-end="url(#wth-arrow)"/>
+    <line x1="646" y1="166" x2="686" y2="166" stroke="#57606a" stroke-width="2" marker-end="url(#wth-arrow)"/>
+
+    <!-- cost arrow down into the score banner -->
+    <line x1="774" y1="204" x2="774" y2="248" stroke="#57606a" stroke-width="2" marker-end="url(#wth-arrow)"/>
+    <text x="786" y="230" font-size="12" font-style="italic" fill="#57606a">cost</text>
+
+    <!-- score banner -->
+    <rect x="42" y="252" width="816" height="50" rx="10" fill="#1f2328"/>
+    <text x="450" y="283" text-anchor="middle" font-size="15" font-weight="600" fill="#ffffff">Score = &#931; cost over every step<tspan dx="12" fill="#3fb950" font-weight="700">— lower wins</tspan></text>
+  </g>
+</svg>

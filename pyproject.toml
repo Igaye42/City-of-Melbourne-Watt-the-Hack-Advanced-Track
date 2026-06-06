@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "watt-the-hack"
+version = "0.2.0"
+description = "Watt The Hack 24-hour energy grid simulation hackathon engine"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi",
+    "uvicorn",
+    "python-dotenv",
+]
+playtest = [
+    "matplotlib>=3.5",
+    "openai>=1.0",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+
+[tool.setuptools.packages.find]
+include = ["watt_the_hack*"]
+
+# Ship scenario JSONs that live in-package. The public mirror keeps released
+# scenarios under watt_the_hack/scenarios/ for pip distribution. In this source
+# repo scenarios live top-level, so this glob matches nothing here — harmless.
+[tool.setuptools.package-data]
+watt_the_hack = ["scenarios/*/*.json"]
+
+[tool.pytest.ini_options]
+# Only collect the real test suite. Keeps bare `pytest` from scanning stray
+# scratch dirs (e.g. codex-pytest-tmp) that can trip collection on Windows.
+testpaths = ["tests"]

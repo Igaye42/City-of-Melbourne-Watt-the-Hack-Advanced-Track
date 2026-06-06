@@ -1,0 +1,63 @@
+name: Publish to PyPI
+
+# Publishes the watt-the-hack package to PyPI via Trusted Publishing (OIDC).
+# No API token/secret required. The `environment: pypi` + `id-token: write`
+# below MUST match the PyPI trusted-publisher config:
+#   Owner: AaronEliasZachariah
+#   Repo:  City-of-Melbourne-Watt-the-Hack-Advanced-Track
+#   Workflow: publish.yml   Environment: pypi
+#
+# Every push to main auto-publishes a fresh release. The version is derived at
+# build time as <major>.<minor>.<github.run_number> (major/minor read from
+# pyproject.toml), so each commit gets a unique, monotonically increasing
+# version with no manual edit and no release. PyPI rejects duplicate versions;
+# the run-number patch guarantees no collisions, and `skip-existing` covers
+# workflow re-runs (which reuse the same run number). Bump major/minor in
+# pyproject.toml when you want to start a higher series.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # manual "Run workflow" button for testing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read        # for actions/checkout
+      id-token: write       # REQUIRED for OIDC trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Derive unique version from run number
+        run: |
+          python - <<'PY'
+          import os, re, pathlib
+          run = os.environ["GITHUB_RUN_NUMBER"]
+          p = pathlib.Path("pyproject.toml")
+          t = p.read_text()
+          m = re.search(r'(?m)^version\s*=\s*"(\d+)\.(\d+)\.\d+"', t)
+          assert m, "no semver version line found in pyproject.toml"
+          v = f"{m.group(1)}.{m.group(2)}.{run}"
+          t = re.sub(r'(?m)^version\s*=\s*".*?"', f'version = "{v}"', t, count=1)
+          p.write_text(t)
+          print(f"Publishing version {v}")
+          PY
+
+      - name: Build sdist + wheel
+        run: |
+          python -m pip install --upgrade build
+          python -m build
+
+      - name: Guard — scenarios bundled, NO judging leaked
+        run: |
+          python -c "import glob,zipfile; whl=glob.glob('dist/*.whl')[0]; n=zipfile.ZipFile(whl).namelist(); s=[x for x in n if 'scenarios/' in x and x.endswith('.json')]; print('bundled scenarios:', s); assert s, 'no scenarios bundled in wheel'; assert not any('judging' in x for x in s), 'JUDGING scenario leaked into wheel — aborting publish'; print('scenario guard OK')"
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
